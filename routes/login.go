@@ -24,12 +24,12 @@ func (LoginRequest) HandleFunc(w http.ResponseWriter, r *http.Request) {
 
 	var user *models.User
 	if user = models.FindUserByEmailOrUsername(request.Email, request.Username); user == nil {
-		util.NewHttpError(w, http.StatusNotFound)
+		util.NewHttpErrorWithMessage(w, http.StatusNotFound, "User not found")
 		return
 	}
 
 	if err := user.ValidatePassword(request.Password); err != nil {
-		util.NewHttpError(w, http.StatusBadRequest)
+		util.NewHttpErrorWithMessage(w, http.StatusBadRequest, "Wrong password")
 		return
 	}
 

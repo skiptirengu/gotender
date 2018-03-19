@@ -12,8 +12,13 @@ type HttpError struct {
 }
 
 func NewHttpError(w http.ResponseWriter, code int) (HttpError) {
+	message := http.StatusText(code)
+	return NewHttpErrorWithMessage(w, code, message)
+}
+
+func NewHttpErrorWithMessage(w http.ResponseWriter, code int, message string) (HttpError) {
 	err := HttpError{Code: code}
-	err.Message = http.StatusText(code)
+	err.Message = message
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
