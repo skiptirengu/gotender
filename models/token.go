@@ -26,7 +26,7 @@ func FindToken(token string) (*Token) {
 		tokenModel = &Token{}
 		maxExpire  = time.Now().Add(time.Minute * 5).Unix()
 	)
-	if database.Open().Where("token = ? AND ? < expires", token, maxExpire).First(tokenModel).RecordNotFound() {
+	if database.Open().Where("token = ? AND ? < expires", token, maxExpire).Preload("User").First(tokenModel).RecordNotFound() {
 		return nil
 	} else {
 		return tokenModel

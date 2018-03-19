@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 	"github.com/skiptirengu/gotender/util"
+	"github.com/gorilla/context"
 )
 
 const (
@@ -22,7 +23,9 @@ func (m Authentication) Middleware(next http.Handler) (http.Handler) {
 			next.ServeHTTP(w, r)
 			return
 		}
-		if token := extractTokenFromHeader(r.Header.Get(header)); m.IsTokenValid(token) {
+		requestToken := extractTokenFromHeader(r.Header.Get(header))
+		if tokenModel := m.getToken(requestToken); tokenModel != nil {
+			context.Set(r, UserContext, &tokenModel.User)
 			next.ServeHTTP(w, r)
 		} else {
 			util.NewHttpError(w, http.StatusForbidden)
@@ -39,8 +42,12 @@ func (m Authentication) isRouteWhitelisted(route string) (bool) {
 	return false
 }
 
-func (m Authentication) IsTokenValid(token string) (bool) {
-	return token != "" && models.FindToken(token) != nil
+func (m Authentication) getToken(token string) (*models.Token) {
+	if token == "" {
+		return nil
+	} else {
+		return models.FindToken(token)
+	}
 }
 
 func extractTokenFromHeader(header string) (string) {
