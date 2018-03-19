@@ -1,0 +1,4 @@
+{
+  "youtube_api_key": "my_key",
+  "secret_hmac_key": "my_secret_token_signing_key"
+}
