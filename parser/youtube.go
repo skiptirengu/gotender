@@ -77,7 +77,7 @@ func (youtubeParser) Extract(url string) (*youtubeResponse) {
 		Error: make(chan error),
 	}
 
-	args := []string{"--print-json", "--quiet", "-J", url}
+	args := []string{"--quiet", "-J", url}
 
 	go func() {
 		var (
