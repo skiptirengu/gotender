@@ -107,8 +107,11 @@ func (youtubeParser) Select(video *youtubeVideo, quality YoutubeQuality) {
 	var match *youtubeFormat
 formatLoop:
 	for index, format := range video.Formats {
+		if format.Vcodec != "none" {
+			continue formatLoop
+		}
 		for _, sup := range supportedCodecs {
-			if format.Vcodec == "none" && strings.HasPrefix(format.Acodec, sup) {
+			if strings.HasPrefix(format.Acodec, sup) {
 				if match == nil {
 					match = &video.Formats[index]
 					continue formatLoop
