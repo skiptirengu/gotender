@@ -51,7 +51,7 @@ func TestParseWorst(t *testing.T) {
 }
 
 func TestParseBest(t *testing.T)  {
-	data, err := Parse("mock", QualityWorst)
+	data, err := Parse("mock", QualityBest)
 	if err != nil {
 		t.Error(err)
 	}
