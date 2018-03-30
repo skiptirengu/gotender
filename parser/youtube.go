@@ -36,7 +36,7 @@ type youtubeVideoInfo struct {
 
 // Extractor: Extracts info of a given video
 type Extractor interface {
-	Extract(string) (*youtubeResponse)
+	Extract(string) *youtubeResponse
 }
 
 // FormatSelector: Selects a format based on an given YoutubeQuality
@@ -71,7 +71,7 @@ type youtubeFormat struct {
 
 type youtubeParser struct{}
 
-func (youtubeParser) Extract(url string) (*youtubeResponse) {
+func (youtubeParser) Extract(url string) *youtubeResponse {
 	resp := &youtubeResponse{
 		Data:  make(chan *youtubeVideo),
 		Error: make(chan error),
@@ -88,6 +88,11 @@ func (youtubeParser) Extract(url string) (*youtubeResponse) {
 		cmd := exec.Command("youtube-dl", args...)
 
 		if reader, err = cmd.StdoutPipe(); err != nil {
+			resp.Error <- err
+			return
+		}
+
+		if err := cmd.Start(); err != nil {
 			resp.Error <- err
 			return
 		}
